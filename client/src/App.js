@@ -1,6 +1,10 @@
 import './App.css';
 import io from 'socket.io-client'
 import { useEffect, useState } from 'react';
+import NavBar from './components/NavBar';
+import AppRouter from './components/AppRouter';
+import { BrowserRouter } from 'react-router-dom'
+
 
 const socket = io.connect('http://localhost:5000')
 function App() {
@@ -23,26 +27,30 @@ function App() {
     })
   }, [socket])
   return (
-    <div className="App">
-      <input 
-        placeholder="Room"
-        value={room}
-        onChange={e => {
-          setRoom(e.target.value)
-        }}
-      />
-      <button onClick={joinRoom}>Send</button>
-      <input 
-        placeholder="Message"
-        value={value}
-        onChange={e => {
-          setValue(e.target.value)
-          console.log(value)
-        }}
-      />
-      <button onClick={sendMessage}>Send</button>
-      {messageReceived}
-    </div>
+    <BrowserRouter>
+      <NavBar />
+      <AppRouter />
+    </BrowserRouter>
+    // <div className="App">
+    //   <input 
+    //     placeholder="Room"
+    //     value={room}
+    //     onChange={e => {
+    //       setRoom(e.target.value)
+    //     }}
+    //   />
+    //   <button onClick={joinRoom}>Send</button>
+    //   <input 
+    //     placeholder="Message"
+    //     value={value}
+    //     onChange={e => {
+    //       setValue(e.target.value)
+    //       console.log(value)
+    //     }}
+    //   />
+    //   <button onClick={sendMessage}>Send</button>
+    //   {messageReceived}
+    // </div>
   );
 }
 
