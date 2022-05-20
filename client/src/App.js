@@ -4,7 +4,13 @@ import { useEffect, useState } from 'react';
 import NavBar from './components/NavBar';
 import AppRouter from './components/AppRouter';
 import { BrowserRouter } from 'react-router-dom'
+import { createTheme, ThemeProvider } from '@mui/material';
 
+const darkTheme = createTheme({
+  palette: {
+      mode: 'dark',
+  }
+})
 
 const socket = io.connect('http://localhost:5000')
 function App() {
@@ -27,10 +33,13 @@ function App() {
     })
   }, [socket])
   return (
-    <BrowserRouter>
-      <NavBar />
-      <AppRouter />
-    </BrowserRouter>
+    <ThemeProvider theme={darkTheme}>
+      <BrowserRouter>
+        <NavBar />
+        <AppRouter />
+      </BrowserRouter>
+    </ThemeProvider>
+    
     // <div className="App">
     //   <input 
     //     placeholder="Room"

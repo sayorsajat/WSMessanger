@@ -5,9 +5,9 @@ import { authRoutes, publicRoutes } from '../routes';
 import { LOGIN_ROUTE, ROOM_ROUTE } from '../utils/consts';
 
 const AppRouter = () => {
-    const user = useSelector((state) => state.user.isAuthenticated);
+    const isAuth = useSelector((state) => state.user.isAuthenticated);
 
-    return user ? (
+    return isAuth ? (
         <Routes>
             <Route path="/*" element={<Navigate replace to={ROOM_ROUTE} />} />
             {publicRoutes.map(({path, Component}) => 

@@ -8,7 +8,7 @@ import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
 import CssBaseline from '@mui/material/CssBaseline';
 import { LOGIN_ROUTE } from '../utils/consts';
-import { connect, useSelector } from 'react-redux' 
+import { connect, useSelector } from 'react-redux';
 
 const darkTheme = createTheme({
     palette: {
@@ -60,7 +60,8 @@ const Search = styled('div')(({ theme }) => ({
 
 const NavBar = () => {
   const [roomValue, setRoomValue] = useState('')
-  const user = useSelector((state) => {
+
+  const isAuth = useSelector((state) => {
     return state.user.isAuthenticated
   })
 
@@ -71,7 +72,7 @@ const NavBar = () => {
               <AppBar position="static">
                   <Toolbar>
                     <Grid container sx={{flexDirection: 'row-reverse'}}>
-                      {user ?
+                      {isAuth ?
                         <Search>
                           <SearchIconWrapper>
                               <SearchIcon />
@@ -88,10 +89,10 @@ const NavBar = () => {
                         </Search>
                       :
                         <Link
-                        to={LOGIN_ROUTE}
-                        style={{textDecoration: 'none', color: 'inherit'}}
+                          to={LOGIN_ROUTE}
+                          style={{textDecoration: 'none', color: 'inherit'}}
                         >
-                          <Button color='inherit' variant='outlined' onClick={() => console.log('login')}>Login</Button>
+                          <Button color='inherit' variant='standard'>Login</Button>
                         </Link>
                       }
                     </Grid>
