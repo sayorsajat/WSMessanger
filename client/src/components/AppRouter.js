@@ -1,10 +1,11 @@
 import React from 'react';
+import { connect, useSelector } from 'react-redux';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { authRoutes, publicRoutes } from '../routes';
 import { LOGIN_ROUTE, ROOM_ROUTE } from '../utils/consts';
 
 const AppRouter = () => {
-    const user = true;
+    const user = useSelector((state) => state.user.isAuthenticated);
 
     return user ? (
         <Routes>
@@ -28,4 +29,4 @@ const AppRouter = () => {
     )
 };
 
-export default AppRouter;
+export default connect()(AppRouter);

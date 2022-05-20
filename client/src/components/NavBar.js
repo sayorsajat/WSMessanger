@@ -8,6 +8,7 @@ import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
 import CssBaseline from '@mui/material/CssBaseline';
 import { LOGIN_ROUTE } from '../utils/consts';
+import { connect, useSelector } from 'react-redux' 
 
 const darkTheme = createTheme({
     palette: {
@@ -59,7 +60,9 @@ const Search = styled('div')(({ theme }) => ({
 
 const NavBar = () => {
   const [roomValue, setRoomValue] = useState('')
-  const user = true;
+  const user = useSelector((state) => {
+    return state.user.isAuthenticated
+  })
 
   return (
       <ThemeProvider theme={darkTheme}>
@@ -99,4 +102,4 @@ const NavBar = () => {
   );
 };
 
-export default NavBar;
+export default connect(null, null)(NavBar);
