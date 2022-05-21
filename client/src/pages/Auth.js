@@ -1,7 +1,10 @@
-import { Button, Container, FormControl, Grid, IconButton, Input, InputLabel, Link, Paper } from '@mui/material';
+import { Button, Container, FormControl, Grid, Input, InputLabel, Link } from '@mui/material';
 import React, { useState } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom'
-import { LOGIN_ROUTE, REGISTRATION_ROUTE } from '../utils/consts';
+import { login, registration } from '../http/userAPI';
+import { HOME_ROUTE, LOGIN_ROUTE, REGISTRATION_ROUTE } from '../utils/consts';
+import { setUser, setIsAuthenticated } from '../redux/action-creators/user'
 
 const Auth = () => {
     const [userName, setUserName] = useState('')
@@ -9,6 +12,24 @@ const Auth = () => {
     const location = useLocation()
     const isLogin = location.pathname === LOGIN_ROUTE
     const navigate = useNavigate()
+    const dispatch = useDispatch()
+
+    const handleSubmit = async () => {
+        try {
+            let data;
+            if (isLogin) {
+                data = await login(userName, password)
+            } else {
+                data = await registration(userName, password);
+            }
+            const dataa = {...data}
+            dispatch(setUser(dataa));
+            dispatch(setIsAuthenticated());
+            navigate(HOME_ROUTE);
+        } catch (error) {
+            alert(error.response.data.message)
+        }
+    }
 
     return (
         <Container>
@@ -50,7 +71,7 @@ const Auth = () => {
                                     <span>Don't have account yet? <Link color="inherit" style={{fontSize: '1rem', marginBottom: '2px'}} component={"button"} onClick={() => {navigate(REGISTRATION_ROUTE)}}>How dare you!</Link></span>
                                 </Grid>
                                 <Grid item>
-                                    <Button color='inherit' variant='text'>log in</Button>
+                                    <Button color='inherit' variant='text' onClick={handleSubmit}>log in</Button>
                                 </Grid>
                             </Grid>
                         :
@@ -59,7 +80,7 @@ const Auth = () => {
                                     <span>Already have account? <Link color="inherit" style={{fontSize: '1rem', marginBottom: '2px'}} component={"button"} onClick={() => {navigate(LOGIN_ROUTE)}}>God bless you!</Link></span>
                                 </Grid>
                                 <Grid item>
-                                    <Button color='inherit' variant='text'>registrate</Button>
+                                    <Button color='inherit' variant='text' onClick={handleSubmit}>registrate</Button>
                                 </Grid>
                             </Grid>
                         }
@@ -69,4 +90,4 @@ const Auth = () => {
     );
 };
 
-export default Auth;
+export default connect(null, null)(Auth);

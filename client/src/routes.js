@@ -1,11 +1,11 @@
 import Auth from "./pages/Auth";
-import Room from "./pages/Room";
-import { LOGIN_ROUTE, REGISTRATION_ROUTE, ROOM_ROUTE } from "./utils/consts";
+import Home from "./pages/Home";
+import { HOME_ROUTE, LOGIN_ROUTE, REGISTRATION_ROUTE } from "./utils/consts";
 
 export const authRoutes = [
     {
-        path: ROOM_ROUTE + '/:id',
-        Component: Room
+        path: HOME_ROUTE,
+        Component: Home
     }
 ]
 
