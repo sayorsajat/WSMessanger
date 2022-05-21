@@ -43,47 +43,50 @@ const Auth = () => {
                     alignItems="center"
                     direction="column"
                 >
-                    <FormControl fullWidth variant='standard'>
-                        <InputLabel>nickname</InputLabel>
-                        <Input fullWidth
-                            type='text'
-                            value={userName}
-                            onChange={(e) => {
-                                setUserName(e.target.value)
-                                console.log(userName)
-                            }}
-                        />
-                    </FormControl>
-                    <FormControl fullWidth variant='standard'>
-                        <InputLabel>password</InputLabel>
-                        <Input fullWidth
-                            type='text'
-                            value={password}
-                            onChange={(e) => {
-                                setPassword(e.target.value)
-                                console.log(userName)
-                            }}
-                        />
-                    </FormControl>
+                    <form onSubmit={e => e.preventDefault()}>
+                        <FormControl fullWidth variant='standard'>
+                            <InputLabel>nickname</InputLabel>
+                            <Input fullWidth
+                                type='text'
+                                value={userName}
+                                onChange={(e) => {
+                                    setUserName(e.target.value)
+                                    console.log(userName)
+                                }}
+                            />
+                        </FormControl>
+                        <FormControl fullWidth variant='standard'>
+                            <InputLabel>password</InputLabel>
+                            <Input fullWidth
+                                type='text'
+                                value={password}
+                                onChange={(e) => {
+                                    setPassword(e.target.value)
+                                    console.log(userName)
+                                }}
+                            />
+                        </FormControl>
                         { isLogin ?
                             <Grid style={{marginTop: '15px', justifyContent: 'space-between'}} container>
                                 <Grid item style={{marginTop: '6px'}}>
-                                    <span>Don't have account yet? <Link color="inherit" style={{fontSize: '1rem', marginBottom: '2px'}} component={"button"} onClick={() => {navigate(REGISTRATION_ROUTE)}}>How dare you!</Link></span>
+                                    <span>Don't have account yet? <Link color="inherit" style={{fontSize: '1rem', marginBottom: '2px'}} component={"button"} type="button" onClick={() => {navigate(REGISTRATION_ROUTE)}}>How dare you!</Link></span>
                                 </Grid>
                                 <Grid item>
-                                    <Button color='inherit' variant='text' onClick={handleSubmit}>log in</Button>
+                                    <Button type='submit' color='inherit' variant='text' onClick={handleSubmit}>log in</Button>
                                 </Grid>
                             </Grid>
                         :
                             <Grid style={{marginTop: '15px', justifyContent: 'space-between'}} container>
                                 <Grid item style={{marginTop: '6px'}}>
-                                    <span>Already have account? <Link color="inherit" style={{fontSize: '1rem', marginBottom: '2px'}} component={"button"} onClick={() => {navigate(LOGIN_ROUTE)}}>God bless you!</Link></span>
+                                    <span>Already have account? <Link color="inherit" style={{fontSize: '1rem', marginBottom: '2px'}} component={"button"} type="button" onClick={() => {navigate(LOGIN_ROUTE)}}>God bless you!</Link></span>
                                 </Grid>
                                 <Grid item>
-                                    <Button color='inherit' variant='text' onClick={handleSubmit}>registrate</Button>
+                                    <Button type='submit' color='inherit' variant='text' onClick={handleSubmit}>registrate</Button>
                                 </Grid>
                             </Grid>
                         }
+                    </form>
+                    
                 </Grid>
             </Grid>
         </Container>

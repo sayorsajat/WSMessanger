@@ -14,10 +14,22 @@ const Message = sequelize.define('message', {
     roomId: {type: DataTypes.INTEGER, allowNull: false},
 })
 
+const Room = sequelize.define('room', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, unique: true ,allowNull: false},
+    userId: {type: DataTypes.INTEGER, allowNull: false},
+})
+
 User.hasMany(Message)
 Message.belongsTo(User)
 
+User.belongsToMany(Room, {through: 'User_Room'})
+Room.belongsToMany(User, {through: 'User_Room'})
+
+Room.hasMany(Message)
+Message.belongsTo(Room)
+
 module.exports = {
     User,
-    Message
+    Message,
+    Room
 }
