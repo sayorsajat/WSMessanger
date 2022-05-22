@@ -9,13 +9,13 @@ const User = sequelize.define('user', {
 
 const Message = sequelize.define('message', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, unique: true ,allowNull: false},
-    userId: {type: DataTypes.INTEGER, allowNull: false},
+    userName: {type: DataTypes.STRING, allowNull: false},
     content: {type: DataTypes.STRING, allowNull: false},
     roomId: {type: DataTypes.INTEGER, allowNull: false},
 })
 
 const Room = sequelize.define('room', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, unique: true ,allowNull: false},
+    roomId: {type: DataTypes.INTEGER, allowNull: false},
     userId: {type: DataTypes.INTEGER, allowNull: false},
 })
 

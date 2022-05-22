@@ -1,9 +1,8 @@
-import { Container, FormControl, Grid, List, ListItemButton, ListItemText } from '@mui/material';
+import { Button, CircularProgress, Container, FormControl, Grid, List, ListItemButton, ListItemText } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import RoomsList from '../components/RoomsList';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { loadMessages, loadRooms } from '../http/messageAPI';
-import { setRoomsList } from '../redux/action-creators/message';
+import { setMessageList, setRoomsList } from '../redux/action-creators/message';
 import { joinRoom } from '../http/messageAPI';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
@@ -51,33 +50,39 @@ const Search = styled('div')(({ theme }) => ({
     },
   }));
 
-const Home = () => {
+const Home = ({roomsList, messageList}) => {
     const [roomValue, setRoomValue] = useState('')
     const userId = useSelector((state) => state.user.user.id)
     const {roomId} = useSelector((state) => state.message)
     const dispatch = useDispatch()
-    const [messages, setMessages] = useState([])
-    const [roomsStateList, setRoomsStateList] = useState([])
+    const [loading, setLoading] = useState(false)
+    const [firstLoading, setFirstLoading] = useState(true)
 
     const handleSubmit = e => {
       e.preventDefault()
       joinRoom(userId, roomValue)
-      loadRooms(userId).then(data => dispatch(setRoomsList(data)))
+      loadRooms(userId).then(data => {
+        dispatch(setRoomsList(data))
+        // setRoomsStateList(data)
+      })
       setRoomValue('')
-    }
+    }    
 
     useEffect(() => {
-        loadRooms(userId).then(data => {
-          dispatch(setRoomsList(data))
-          setRoomsStateList(data)
-        })
-        loadMessages(roomId).then(data => setMessages(data));
-    }, [roomId])
+      loadRooms(userId).then(data => {
+        dispatch(setRoomsList(data))
+      })
+      loadMessages(roomId).then(data => {
+        dispatch(setMessageList(data))
+        setFirstLoading(false)
+      });
+      
+    }, [dispatch, userId, roomId])
 
-    return (
+    return !firstLoading ? (
         <Container>
-            <Grid style={{marginTop: '10px'}}>
-                <Grid item container sx={{flexDirection: 'row-reverse'}}>
+            <Grid container style={{marginTop: '10px'}}>
+                <Grid item md={8} container sx={{flexDirection: 'row-reverse'}}>
                   <form onSubmit={handleSubmit}>
                     <FormControl>
                       <Search>
@@ -96,27 +101,48 @@ const Home = () => {
                         />
                       </Search>
                     </FormControl>
+                    <Button type='submit' color='inherit' variant='text'>join</Button>
                   </form>
                 </Grid>
-                <Grid item style={{display: 'flex', width: '200px'}}>
-                  <List container="true"
-                    style={{display: 'flex'}}
+            </Grid>
+            <Grid container>
+              <Grid item style={{display: 'flex'}}>
+                <Grid item xs={2} style={{width: '200px'}}>
+                  <List dense
+                    style={{display: 'block', maxWidth: '250px'}}
                     sx={{width: '100%', maxWidth: 180, bgcolor: 'Background.paper'}}
                     component="nav"
                   >
-                    {roomsStateList.map(room =>
-                      <ListItemButton key={room.id}>
-                          <ListItemText key={room.id} primary={`${room.id}`} />
+                    {roomsList.map(room =>
+                      <ListItemButton style={{width: '120px'}} key={room.id}>
+                          <ListItemText key={room.id} primary={`${room.roomId}`} />
                       </ListItemButton>
                     )}
                   </List>
                 </Grid>
-                <Grid item container style={{}}>
-
+                <Grid item style={{marginLeft: '15px', marginTop: '12px'}}>
+                  {messageList.map(message =>
+                    <Grid item md={12} key={message.id} style={{width: '70vw', maxHeight: '100px'}}>
+                      <Grid item style={{height: '30px', minHeight: '20px', maxHeight: '100px'}} key={message.id}>{message.userName}: {message.content}</Grid>
+                    </Grid>
+                  )}
                 </Grid>
+              </Grid>
+                
             </Grid>
         </Container>
-    );
+    )
+    :
+    (
+      <CircularProgress />
+    )
 };
 
-export default Home;
+const mapStateToProps = (state) => {
+  return {
+    roomsList: state.message.roomsList,
+    messageList: state.message.messageList
+  }
+}
+
+export default connect(mapStateToProps, null)(Home);

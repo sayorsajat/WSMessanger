@@ -4,3 +4,4 @@ export const SET_IS_AUTHENTICATED_FALSE = 'SET_IS_AUTHENTICATED_FALSE';
 export const GET_USER = 'GET_USER';
 export const SET_ROOM_ID = 'SET_ROOM_ID';
 export const SET_ROOMS_LIST = 'SET_ROOMS_LIST';
+export const SET_MESSAGE_LIST = 'SET_MESSAGE_LIST';

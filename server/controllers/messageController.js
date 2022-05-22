@@ -3,20 +3,21 @@ const {Message, User, Room} = require('../models/models')
 
 class MessageController {
     async sendMessage(req, res, next) {
-        const {userId, content, roomId} = req.body
-        if (!userId || !content || !roomId) {
+        const {userName, content, roomId} = req.body
+        if (!userName || !content || !roomId) {
             return next(ApiError.badRequest('Invalid author id or content or room id'))
         }
-        const message = await Message.create({userId, content, roomId})
     
         const author = await User.findOne({
             where: {
-                id: userId,
+                userName,
             }
         })
         if (!author) {
-            return next(ApiError.badRequest('invalid author id'))
+            return next(ApiError.badRequest('invalid author nickname'))
         }
+
+        const message = await Message.create({userName, content, roomId})
 
         return res.json(message)
     }
@@ -49,11 +50,11 @@ class MessageController {
         if (!roomId) {
             return next(ApiError.badRequest('Invalid room id'))
         }
-        const candidateRoom = await Room.findOne({where: {id: roomId, userId}})
+        const candidateRoom = await Room.findOne({where: {roomId, userId}})
         if (candidateRoom) {
             return next(ApiError.badRequest('Already joined room'))
         }
-        const room = await Room.create({id: roomId, userId})
+        const room = await Room.create({roomId, userId})
         return res.json(room)
     }
 }
