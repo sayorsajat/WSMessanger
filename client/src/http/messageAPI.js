@@ -1,7 +1,7 @@
 import { $authHost } from './index';
 
-export const sendMessage = async (userId, content, roomId) => {
-    const {data} = await $authHost.post('api/msg/sendMessage', {userId, content, roomId})
+export const sendMessage = async (userName, content, roomId) => {
+    const {data} = await $authHost.post('api/msg/sendMessage', {userName, content, roomId})
     return data
 }
 

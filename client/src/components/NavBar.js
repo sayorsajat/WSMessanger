@@ -6,6 +6,7 @@ import Toolbar from '@mui/material/Toolbar';
 import CssBaseline from '@mui/material/CssBaseline';
 import { LOGIN_ROUTE } from '../utils/consts';
 import { connect, useDispatch, useSelector } from 'react-redux';
+import { setIsAuthenticatedFalse } from '../redux/action-creators/user';
 
 
 const darkTheme = createTheme({
@@ -34,7 +35,7 @@ const NavBar = () => {
                         <Link
                           style={{textDecoration: 'none', color: 'inherit'}}
                         >
-                          <Button color='inherit' variant='standard'>Log out</Button>
+                          <Button onClick={() => dispatch(setIsAuthenticatedFalse())} color='inherit' variant='standard'>Log out</Button>
                         </Link>
                       :
                         <Link
