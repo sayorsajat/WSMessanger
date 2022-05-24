@@ -27,7 +27,7 @@ io.on('connection', (socket) => {
     console.log("Users's id", socket.id)
 
     socket.on('send_message', (data) => {
-        socket.to(data.room).emit('receive_message')
+        socket.to(data.room).emit('receive_message', data)
     })
 
     socket.on('join_room', (data) => {
