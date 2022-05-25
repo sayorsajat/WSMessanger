@@ -56,40 +56,35 @@ const Home = ({roomsList, messageList}) => {
     const [roomValue, setRoomValue] = useState('')
     const userId = useSelector((state) => state.user.user.id)
     const userName = useSelector((state) => state.user.user.userName)
-    const {roomId} = useSelector((state) => state.message)
     const messageReduxList = useSelector((state) => state.message.messageList)
     const dispatch = useDispatch()
     const [firstLoading, setFirstLoading] = useState(true)
     const [currentMessage, setCurrentMessage] = useState('')
     const [received, setReceived] = useState('')
-    const [stateMessageList, setStateMessageList] = useState([])
+    const [roomId, setRoomId] = useState('1')
 
     const handleSubmit = e => {
       e.preventDefault()
-      joinRoom(userId, roomValue)
-      loadRooms(userId).then(data => {
-        dispatch(setRoomsList(data))
+      joinRoom(userId, roomValue).then(() => {
+        loadRooms(userId).then(data => {
+          dispatch(setRoomsList(data))
+        })
+        setRoomValue('')
       })
-      setRoomValue('')
     }
 
     const handleMessageSubmit = e => {
       e.preventDefault()
       sendMessage(userName, currentMessage, roomId).then(data => {
-        socket.emit('send_message', {message: currentMessage, room: roomId});
         loadMessages(roomId).then(data => {
           dispatch(setMessageList(data))
+          socket.emit('send_message', {message: currentMessage, room: roomId});
         })
         setCurrentMessage('')
       })
     }
 
-    useEffect(() => {
-      socket.on('receive_message', data => {
-        setReceived(data);
-        console.log('received')
-      })
-    }, [socket])
+    
     useEffect(() => {
       loadRooms(userId).then(data => {
         dispatch(setRoomsList(data))
@@ -99,8 +94,12 @@ const Home = ({roomsList, messageList}) => {
         setFirstLoading(false)
       });
 
-      socket.emit('join_room', {room: roomId})
-    }, [dispatch, roomId])
+      socket.on('receive_message', data => {
+        loadMessages(roomId).then(data => {
+          dispatch(setMessageList(data))
+        });
+      })
+    }, [dispatch, roomId, socket])
 
     const mapRoomsList = () => roomsList.map(room =>
       <ListItemButton onClick={() => {
@@ -133,8 +132,8 @@ const Home = ({roomsList, messageList}) => {
                           inputProps={{ 'aria-label': 'search' }}
                           value={roomValue}
                           onChange={e => {
-                              setRoomValue(e.target.value)
-                              console.log(roomValue)
+                            setRoomValue(e.target.value)
+                            console.log(roomValue)
                           }}
                         />
                       </Search>
@@ -153,7 +152,7 @@ const Home = ({roomsList, messageList}) => {
                   >
                     {roomsList.map(room =>
                       <ListItemButton onClick={() => {
-                          dispatch(setRoomId(room.roomId))
+                          setRoomId(room.roomId);
                           socket.emit('join_room', roomId)
                         }} style={{width: '120px'}} key={room.id}>
                           <ListItemText key={room.id} primary={`${room.roomId}`} />
