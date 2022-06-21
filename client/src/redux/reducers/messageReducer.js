@@ -2,7 +2,7 @@ import { SET_MESSAGE_LIST, SET_ROOMS_LIST, SET_ROOM_ID } from "../utils/actionCo
 
 
 const initialState = {
-    roomId: 1,
+    roomId: '1',
     roomsList: null,
     messageList: null,
 }
