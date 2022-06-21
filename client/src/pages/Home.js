@@ -60,7 +60,6 @@ const Home = ({roomsList, messageList}) => {
     const dispatch = useDispatch()
     const [firstLoading, setFirstLoading] = useState(true)
     const [currentMessage, setCurrentMessage] = useState('')
-    const [received, setReceived] = useState('')
     const [roomId, setRoomId] = useState('1')
 
     const handleSubmit = e => {
@@ -189,7 +188,6 @@ const Home = ({roomsList, messageList}) => {
                   </Container>
                 </form>
               </Grid>
-              received: {received}
             </Grid>
         </Container>
     )

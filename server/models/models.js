@@ -8,10 +8,10 @@ const User = sequelize.define('user', {
 })
 
 const Message = sequelize.define('message', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, unique: true ,allowNull: false},
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, unique: true, allowNull: false},
     userName: {type: DataTypes.STRING, allowNull: false},
     content: {type: DataTypes.STRING, allowNull: false},
-    roomId: {type: DataTypes.INTEGER, allowNull: false},
+    roomId: {type: DataTypes.STRING, allowNull: false},
 })
 
 const Room = sequelize.define('room', {
