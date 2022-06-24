@@ -2,7 +2,7 @@ import { Button, CircularProgress, Container, FormControl, Grid, Input, List, Li
 import React, { useEffect, useRef, useState } from 'react';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { loadMessages, loadRooms, sendMessage } from '../http/messageAPI';
-import { setMessageList, setRoomId, setRoomsList } from '../redux/action-creators/message';
+import { addNewMessage, setMessageList, setRoomId, setRoomsList } from '../redux/action-creators/message';
 import { joinRoom } from '../http/messageAPI';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
@@ -56,11 +56,10 @@ const Home = ({roomsList, messageList}) => {
     const [roomValue, setRoomValue] = useState('')
     const userId = useSelector((state) => state.user.user.id)
     const userName = useSelector((state) => state.user.user.userName)
-    const messageReduxList = useSelector((state) => state.message.messageList)
     const dispatch = useDispatch()
-    const [firstLoading, setFirstLoading] = useState(true)
     const [currentMessage, setCurrentMessage] = useState('')
     const [roomId, setRoomId] = useState('1')
+    
 
     const handleSubmit = e => {
       e.preventDefault()
@@ -77,7 +76,7 @@ const Home = ({roomsList, messageList}) => {
       sendMessage(userName, currentMessage, roomId).then(data => {
         loadMessages(roomId).then(data => {
           dispatch(setMessageList(data))
-          socket.emit('send_message', {message: currentMessage, room: roomId});
+          socket.emit('send_message', {id: Date.now().toString(36) + Math.random().toString(36).substr(2), message: currentMessage, room: roomId, userName: userName});
         })
         setCurrentMessage('')
       })
@@ -90,32 +89,20 @@ const Home = ({roomsList, messageList}) => {
       })
       loadMessages(roomId).then(data => {
         dispatch(setMessageList(data))
-        setFirstLoading(false)
       });
 
       socket.on('receive_message', data => {
-        loadMessages(roomId).then(data => {
-          dispatch(setMessageList(data))
-        });
+        dispatch(addNewMessage({id: data.id, content: data.message, roomId: data.room, userName: data.userName}));
       })
-    }, [dispatch, roomId, socket])
+    }, [dispatch, socket])
 
-    const mapRoomsList = () => roomsList.map(room =>
-      <ListItemButton onClick={() => {
-          dispatch(setRoomId(room.roomId))
-          socket.emit('join_room', roomId)
-        }} style={{width: '120px'}} key={room.id}>
-          <ListItemText key={room.id} primary={`${room.roomId}`} />
-      </ListItemButton>
-    )
+    if (messageList === null) {
+      return (
+        <CircularProgress />
+      )
+    }
 
-    const mapMessageList = () => messageList.map(message =>
-      <div sx={{overflow: 'auto'}} key={message.id} style={{display: 'block', width: '70vw', marginTop: '5px', clear: 'both'}}>
-        <div style={{wordWrap: 'break-word'}} key={message.id}>{message.userName}: {message.content}</div>
-      </div>
-    );
-
-    return !firstLoading ? (
+    return (
         <Container>
             <Grid container style={{marginTop: '10px'}}>
                 <Grid item md={8} container sx={{flexDirection: 'row-reverse'}}>
@@ -152,6 +139,9 @@ const Home = ({roomsList, messageList}) => {
                     {roomsList.map(room =>
                       <ListItemButton onClick={() => {
                           setRoomId(room.roomId);
+                          loadMessages(roomId).then(data => {
+                            dispatch(setMessageList(data))
+                          })
                           socket.emit('join_room', roomId)
                         }} style={{width: '120px'}} key={room.id}>
                           <ListItemText key={room.id} primary={`${room.roomId}`} />
@@ -191,10 +181,7 @@ const Home = ({roomsList, messageList}) => {
             </Grid>
         </Container>
     )
-    :
-    (
-      <CircularProgress />
-    )
+    
 }
 
 const mapStateToProps = (state) => {

@@ -1,4 +1,4 @@
-import { SET_MESSAGE_LIST, SET_ROOMS_LIST, SET_ROOM_ID } from "../utils/actionConsts"
+import { ADD_NEW_MESSAGE, SET_MESSAGE_LIST, SET_ROOMS_LIST, SET_ROOM_ID } from "../utils/actionConsts"
 
 
 const initialState = {
@@ -15,6 +15,8 @@ export const messageReducer = (state = initialState, action) => {
             return {...state, roomsList: action.payload}
         case SET_MESSAGE_LIST:
             return {...state, messageList: action.payload}
+        case ADD_NEW_MESSAGE:
+            return {...state, messageList: state.messageList.concat([action.payload])}
         default:
             return state
     }

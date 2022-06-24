@@ -24,14 +24,17 @@ const io = new Server(server, {
 })
 
 io.on('connection', (socket) => {
+    let prevRoom = 1;
     console.log("Users's id", socket.id)
     
     socket.on('send_message', (data) => {
-        io.to(data.room).emit('receive_message', data.message)
+        socket.to(data.room).emit('receive_message', data)
         console.log("sent", data.message)
     })
 
     socket.on('join_room', (data) => {
+        socket.leave(prevRoom)
+        prevRoom = data;
         socket.join(data)
         console.log("joined")
     })

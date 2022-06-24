@@ -15,7 +15,8 @@ const Message = sequelize.define('message', {
 })
 
 const Room = sequelize.define('room', {
-    roomId: {type: DataTypes.STRING, allowNull: false, primaryKey: true},
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, allowNull: false},
+    roomId: {type: DataTypes.STRING, allowNull: false},
     userId: {type: DataTypes.INTEGER, allowNull: false},
 })
 
