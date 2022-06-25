@@ -24,7 +24,8 @@ const io = new Server(server, {
 })
 
 io.on('connection', (socket) => {
-    let prevRoom = 1;
+    socket.join('1')
+    let prevRoom = '1';
     console.log("Users's id", socket.id)
     
     socket.on('send_message', (data) => {

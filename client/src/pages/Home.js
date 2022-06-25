@@ -139,10 +139,11 @@ const Home = ({roomsList, messageList}) => {
                     {roomsList.map(room =>
                       <ListItemButton onClick={() => {
                           setRoomId(room.roomId);
-                          loadMessages(roomId).then(data => {
+                          loadMessages(room.roomId).then(data => {
                             dispatch(setMessageList(data))
                           })
-                          socket.emit('join_room', roomId)
+                          
+                          socket.emit('join_room', room.roomId)
                         }} style={{width: '120px'}} key={room.id}>
                           <ListItemText key={room.id} primary={`${room.roomId}`} />
                       </ListItemButton>
