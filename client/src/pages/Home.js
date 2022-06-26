@@ -8,6 +8,7 @@ import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
 import io from 'socket.io-client';
+import MessageImg from '../components/MessageImg';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -59,6 +60,7 @@ const Home = ({roomsList, messageList}) => {
     const dispatch = useDispatch()
     const [currentMessage, setCurrentMessage] = useState('')
     const [roomId, setRoomId] = useState('1')
+    const [file, setFile] = useState(null)
     
 
     const handleSubmit = e => {
@@ -73,15 +75,22 @@ const Home = ({roomsList, messageList}) => {
 
     const handleMessageSubmit = e => {
       e.preventDefault()
-      sendMessage(userName, currentMessage, roomId).then(data => {
+      const formData = new FormData()
+      formData.append('userName', userName)
+      formData.append('content', currentMessage)
+      formData.append('roomId', roomId)
+      formData.append('img', file)
+
+      sendMessage(formData).then(data => {
         loadMessages(roomId).then(data => {
           dispatch(setMessageList(data))
-          socket.emit('send_message', {id: Date.now().toString(36) + Math.random().toString(36).substr(2), message: currentMessage, room: roomId, userName: userName});
+          socket.emit('send_message', {id: Date.now().toString(36) + Math.random().toString(36).substr(2), message: currentMessage, room: roomId, userName: userName, img: file});
+        }).then(() => {
+          setFile(null)
         })
         setCurrentMessage('')
       })
     }
-
     
     useEffect(() => {
       loadRooms(userId).then(data => {
@@ -154,14 +163,29 @@ const Home = ({roomsList, messageList}) => {
                   {messageList.map(message =>
                     <div sx={{overflow: 'auto'}} key={message.id} style={{display: 'block', width: '70vw', marginTop: '5px', clear: 'both'}}>
                       <div style={{wordWrap: 'break-word'}} key={message.id}>{message.userName}: {message.content}</div>
+                      {/* <MessageImg key={message.id+1} img={message.img} /> */}
+                      {message.img?
+                        <img src={'http://localhost:5000/' + message.img} />
+                        :
+                        null
+                      }
                     </div>
                   )}
                 </Grid>
               </Grid>
               <Grid item style={{marginTop: '20px'}}>
-                <form onSubmit={handleMessageSubmit}>
+                <form onSubmit={(e) => handleMessageSubmit(e)}>
                   <Container style={{width: '90vw'}}>
                     <div style={{width: '50vw', display: 'flex', float: 'right'}}>
+                      <FormControl variant='standard'>
+                        <Input fullWidth
+                          type='file'
+                          onChange={(e) => {
+                            let imageObject = e.target.files[0]
+                            setFile(imageObject)
+                          }}
+                        />
+                      </FormControl>
                       <FormControl fullWidth variant='standard'>
                         <Input fullWidth
                             type='text'

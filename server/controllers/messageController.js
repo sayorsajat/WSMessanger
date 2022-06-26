@@ -1,9 +1,11 @@
 const ApiError = require('../error/ApiError')
 const {Message, User, Room} = require('../models/models')
+const path = require('path')
 
 class MessageController {
     async sendMessage(req, res, next) {
         const {userName, content, roomId} = req.body
+        
         if (!userName || !content || !roomId) {
             return next(ApiError.badRequest('Invalid author id or content or room id'))
         }
@@ -13,13 +15,24 @@ class MessageController {
                 userName,
             }
         })
+
         if (!author) {
             return next(ApiError.badRequest('invalid author nickname'))
         }
 
-        const message = await Message.create({userName, content, roomId})
-
-        return res.json(message)
+        if (!req.files) {
+            const fileName = null;
+            const message = await Message.create({userName, content, roomId, img: fileName})
+            return res.json(message)
+        } else {
+            const {img} = req.files
+            const fileName = Date.now().toString(36) + Math.random().toString(36).substr(2) + '.jpg'
+            img.mv(path.resolve(__dirname, '..', 'static', fileName))
+            const message = await Message.create({userName, content, roomId, img: fileName})
+            return res.json(message)
+        }
+        
+        
     }
 
     async loadMessages(req, res, next) {
