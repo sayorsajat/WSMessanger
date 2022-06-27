@@ -29,6 +29,15 @@ class MessageController {
             const fileName = Date.now().toString(36) + Math.random().toString(36).substr(2) + '.jpg'
             img.mv(path.resolve(__dirname, '..', 'static', fileName))
             const message = await Message.create({userName, content, roomId, img: fileName})
+
+            const postBody = {Name: fileName}
+
+            await fetch("http://localhost:6001/resize", {
+                method: "PUT",
+                headers: {'Content-Type': 'application/json'}, 
+                body: JSON.stringify(postBody)
+            })
+            
             return res.json(message)
         }
         

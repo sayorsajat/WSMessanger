@@ -9,6 +9,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
 import io from 'socket.io-client';
 import MessageImg from '../components/MessageImg';
+import { resizeImage } from '../http/goAPI';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -83,7 +84,6 @@ const Home = ({roomsList, messageList}) => {
 
       sendMessage(formData).then(data => {
         const fileName = data.img
-        console.log(fileName)
         dispatch(addNewMessage(data))
         socket.emit('send_message', {id: Date.now().toString(36) + Math.random().toString(36).substr(2), message: currentMessage, room: roomId, userName: userName, img: fileName});
         setFile(null)
