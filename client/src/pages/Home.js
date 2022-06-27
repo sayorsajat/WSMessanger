@@ -82,12 +82,11 @@ const Home = ({roomsList, messageList}) => {
       formData.append('img', file)
 
       sendMessage(formData).then(data => {
-        loadMessages(roomId).then(data => {
-          dispatch(setMessageList(data))
-          socket.emit('send_message', {id: Date.now().toString(36) + Math.random().toString(36).substr(2), message: currentMessage, room: roomId, userName: userName, img: file});
-        }).then(() => {
-          setFile(null)
-        })
+        const fileName = data.img
+        console.log(fileName)
+        dispatch(addNewMessage(data))
+        socket.emit('send_message', {id: Date.now().toString(36) + Math.random().toString(36).substr(2), message: currentMessage, room: roomId, userName: userName, img: fileName});
+        setFile(null)
         setCurrentMessage('')
       })
     }
@@ -101,11 +100,11 @@ const Home = ({roomsList, messageList}) => {
       });
 
       socket.on('receive_message', data => {
-        dispatch(addNewMessage({id: data.id, content: data.message, roomId: data.room, userName: data.userName}));
+        dispatch(addNewMessage({id: data.id, content: data.message, roomId: data.room, userName: data.userName, img: data.img}));
       })
     }, [dispatch, socket])
 
-    if (messageList === null) {
+    if (messageList == null || roomsList == null) {
       return (
         <CircularProgress />
       )
@@ -114,7 +113,7 @@ const Home = ({roomsList, messageList}) => {
     return (
         <Container>
             <Grid container style={{marginTop: '10px'}}>
-                <Grid item md={8} container sx={{flexDirection: 'row-reverse'}}>
+                <Grid item container sx={{flexDirection: 'row-reverse'}}>
                   <form onSubmit={handleSubmit}>
                     <FormControl>
                       <Search>
