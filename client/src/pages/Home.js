@@ -9,7 +9,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
 import io from 'socket.io-client';
 import MessageImg from '../components/MessageImg';
-import { resizeImage } from '../http/goAPI';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',

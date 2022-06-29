@@ -1,6 +1,8 @@
 const ApiError = require('../error/ApiError')
 const {Message, User, Room} = require('../models/models')
 const path = require('path')
+const fetch = require('node-fetch')
+const fs = require('fs')
 
 class MessageController {
     async sendMessage(req, res, next) {
@@ -27,15 +29,17 @@ class MessageController {
         } else {
             const {img} = req.files
             const fileName = Date.now().toString(36) + Math.random().toString(36).substr(2) + '.jpg'
-            img.mv(path.resolve(__dirname, '..', 'static', fileName))
+            img.mv(path.resolve(__dirname, '../../goServices/resizer', 'static', fileName))
             const message = await Message.create({userName, content, roomId, img: fileName})
 
             const postBody = {Name: fileName}
 
             await fetch("http://localhost:6001/resize", {
-                method: "PUT",
+                method: "POST",
                 headers: {'Content-Type': 'application/json'}, 
                 body: JSON.stringify(postBody)
+            }).then((data) => {
+                fs.rename(__dirname + '../../../goServices/resizer/static/' + fileName, __dirname + '../../static/' + fileName, (err) => console.log(err))
             })
             
             return res.json(message)

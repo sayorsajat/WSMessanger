@@ -36,7 +36,7 @@ func resizeHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 	}
 
-	file, err := os.Open("../../server/static/" + fileName.Name)
+	file, err := os.Open("./static/" + fileName.Name)
 	checkError(err)
 
 	img, err := jpeg.Decode(file)
@@ -47,11 +47,14 @@ func resizeHandler(w http.ResponseWriter, r *http.Request) {
 
 	out, err := os.Create(fileName.Name)
 	checkError(err)
-	defer out.Close()
 
 	jpeg.Encode(out, m, nil)
+	out.Close()
 
-	err = os.Rename(fileName.Name, "../../server/static/"+fileName.Name)
+	defer w.Write([]byte("Done"))
+	err = os.Rename("./"+fileName.Name, "./static/"+fileName.Name)
+	checkError(err)
+
 }
 
 func main() {

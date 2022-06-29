@@ -16,16 +16,13 @@ const Message = sequelize.define('message', {
 })
 
 const Room = sequelize.define('room', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, allowNull: false},
+    id: {type: DataTypes.INTEGER, unique: true, primaryKey: true, autoIncrement: true, allowNull: false},
     roomId: {type: DataTypes.STRING, primaryKey: true, allowNull: false},
     userId: {type: DataTypes.INTEGER, allowNull: false},
 })
 
 User.hasMany(Message)
 Message.belongsTo(User)
-
-User.belongsToMany(Room, {through: 'User_Room'})
-Room.belongsToMany(User, {through: 'User_Room'})
 
 Room.hasMany(Message)
 Message.belongsTo(Room)
