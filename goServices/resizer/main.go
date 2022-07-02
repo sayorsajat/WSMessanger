@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"image/jpeg"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -22,16 +21,10 @@ func checkError(err error) {
 }
 
 func resizeHandler(w http.ResponseWriter, r *http.Request) {
-	bodyBytes, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-	}
 
 	var fileName FileName
-	err = json.Unmarshal(bodyBytes, &fileName)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&fileName.Name); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
 	}
