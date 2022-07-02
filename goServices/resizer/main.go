@@ -21,13 +21,12 @@ func checkError(err error) {
 }
 
 func resizeHandler(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
-
 	var fileName FileName
-	if err := json.NewDecoder(r.Body).Decode(&fileName.Name); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&fileName); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
 	}
+	defer r.Body.Close()
 
 	file, err := os.Open("./static/" + fileName.Name)
 	checkError(err)
@@ -47,7 +46,6 @@ func resizeHandler(w http.ResponseWriter, r *http.Request) {
 	defer w.Write([]byte("Done"))
 	err = os.Rename("./"+fileName.Name, "./static/"+fileName.Name)
 	checkError(err)
-
 }
 
 func main() {
